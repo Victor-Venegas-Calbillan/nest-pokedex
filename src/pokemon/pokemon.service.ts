@@ -85,12 +85,25 @@ export class PokemonService {
     return;
   }
 
+  async createMany(CreatePokemonDto: CreatePokemonDto[]) {
+    try {
+      const pokemons = await this.pokemonModel.create(CreatePokemonDto);
+      return pokemons;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  async deleteAll() {
+    await this.pokemonModel.deleteMany({});
+  }
+
   private handleExceptions(error: any) {
     if (error.code === 11000) {
       throw new BadRequestException(
         `pokemon exists in db ${JSON.stringify(error.keyValue)}`,
       );
     }
-    throw new InternalServerErrorException(`Can't update Pokemon `);
+    throw new InternalServerErrorException(error);
   }
 }
